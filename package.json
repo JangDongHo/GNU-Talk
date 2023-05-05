@@ -17,14 +17,22 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "css-watch": "sass views/scss/style.scss client/style.css --watch"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
-    "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-express": "^9.4.0",
+    "@nestjs/platform-ws": "^9.4.0",
+    "@nestjs/serve-static": "^3.0.1",
+    "@nestjs/websockets": "^9.4.0",
+    "pug": "^3.0.2",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "sass": "^1.62.1",
+    "socket.io": "^4.6.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

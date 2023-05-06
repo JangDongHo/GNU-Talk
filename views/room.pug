@@ -1,7 +1,6 @@
 extends layouts/base
 
 block content
-  ul#messages
-  form#form(action="")
-    input#input(autocomplete="off")
-    button Send
+  <h1>WebSocket Chat</h1>
+  <input type="text" id="message-input" />
+  <button onclick="sendMessage()">Send</button>

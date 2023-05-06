@@ -6,38 +6,35 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Server } from 'ws';
+import { Server, WebSocket } from 'ws';
 
 @WebSocketGateway(8080)
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  client: Record<string, any>;
-  constructor() {
-    this.client = {};
-  }
   @WebSocketServer()
   server: Server;
 
-  public handleConnection(client): void {
-    console.log('hi');
-    client['id'] = String(Number(new Date()));
-    client['nickname'] = '낯선남자' + String(Number(new Date()));
-    this.client[client['id']] = client;
+  clients: WebSocket[] = [];
+
+  handleConnection(client: WebSocket) {
+    this.clients.push(client);
+    console.log('Client connected');
   }
 
-  public handleDisconnect(client): void {
-    console.log('bye', client['id']);
-    delete this.client[client['id']];
+  handleDisconnect(client: WebSocket) {
+    this.clients = this.clients.filter((c) => c !== client);
+    console.log('Client disconnected');
   }
 
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): void {
-    for (const [key, value] of Object.entries(this.client)) {
-      value.send(
-        JSON.stringify({
-          event: 'events',
-          data: { nickname: client['nickname'], message: payload },
-        }),
-      );
-    }
+  handleMessage(client: WebSocket, payload: string) {
+    console.log('Received message:', payload);
+
+    const message = JSON.stringify({ event: 'message', data: payload });
+
+    this.clients.forEach((c) => {
+      if (c.readyState === WebSocket.OPEN) {
+        c.send(message);
+      }
+    });
   }
 }

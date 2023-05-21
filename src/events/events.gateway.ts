@@ -20,7 +20,16 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client['id'] = uuid();
     client['username'] = '낯선남자' + client['id'].split('-')[1];
     this.clients[client['id']] = client;
-    console.log('Client connected');
+    const message = JSON.stringify({
+      event: 'join',
+      username: client['username'],
+      data: '님이 입장하셨습니다.',
+    });
+    Object.values(this.clients).forEach((c) => {
+      if (c.readyState === WebSocket.OPEN) {
+        c.send(message);
+      }
+    });
   }
 
   handleDisconnect(client: WebSocket) {
@@ -34,7 +43,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     const message = JSON.stringify({
       event: 'message',
-      username: client.username,
+      username: client['username'],
       data: payload,
     });
 

@@ -1,51 +1,74 @@
 import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsResponse,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
 } from '@nestjs/websockets';
+import { Room, Client, ChatServer } from './events.interfaces';
 import { Server, WebSocket } from 'ws';
 import { v4 as uuid } from 'uuid';
 
 @WebSocketGateway(8080)
-export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class EventsGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
+  rooms: Room = {};
+  clients: Client = {};
 
-  rooms: { [id: string]: string[] } = {};
-  clients: { [id: string]: WebSocket } = {};
-
-  @SubscribeMessage('join')
-  handleConnection(client: WebSocket, payload: string): void {
+  @SubscribeMessage('joinRoom')
+  handleConnect(client: WebSocket, roomId: string): void {
     client['id'] = uuid();
     client['username'] = '낯선남자' + client['id'].split('-')[1];
     this.clients[client['id']] = client;
+
+    if (!this.rooms[roomId]) this.rooms[roomId] = [];
+
+    this.rooms[roomId].push(client);
+
     const message = JSON.stringify({
       event: 'join',
       username: client['username'],
       data: '님이 입장하셨습니다.',
     });
-    Object.values(this.clients).forEach((c) => {
+
+    // 브로드캐스팅
+    const roomClients = this.rooms[roomId];
+    roomClients.forEach((c) => {
       if (c.readyState === WebSocket.OPEN) {
         c.send(message);
       }
     });
   }
 
-  handleDisconnect(client: WebSocket) {
+  handleDisconnect(client: WebSocket): void {
+    const roomId = Object.keys(this.rooms).find((key) =>
+      this.rooms[key].includes(client),
+    );
+    const clientId = client['id'];
+    const username = client['username'];
+
+    // 클라이언트 정보 삭제
+    const roomClients = this.rooms[roomId];
+    roomClients.forEach((roomClient) => {
+      if (roomClient['id'] === clientId) {
+        roomClients.splice(roomClients.indexOf(roomClient), 1);
+      }
+    });
+
+    // 퇴장 메시지 생성
     const message = JSON.stringify({
       event: 'leave',
-      username: client['username'],
+      username: username,
       data: '님이 퇴장하셨습니다.',
     });
-    Object.values(this.clients).forEach((c) => {
-      if (c.readyState === WebSocket.OPEN) {
+
+    // 퇴장한 클라이언트를 제외하고, 해당 방에 속한 클라이언트에게 퇴장 메시지 전송 (브로드캐스팅)
+    roomClients.forEach((c) => {
+      if (c !== client && c.readyState === WebSocket.OPEN) {
         c.send(message);
       }
     });
-    delete this.clients[client['id']];
   }
 
   @SubscribeMessage('message')
@@ -55,11 +78,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const message = JSON.stringify({
       event: 'message',
       username: client['username'],
-      data: payload,
+      data: payload['message'],
       time: Date.now(),
     });
 
-    Object.values(this.clients).forEach((c) => {
+    const roomClients = this.rooms[payload['roomId']];
+    roomClients.forEach((c) => {
       if (c.readyState === WebSocket.OPEN) {
         c.send(message);
       }

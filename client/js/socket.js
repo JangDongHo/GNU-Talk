@@ -1,8 +1,8 @@
 const socket = new WebSocket('ws://localhost:8080');
+const roomId = window.location.pathname.split('/')[2];
 
 socket.onopen = () => {
-  console.log(`Connected to ${roomId} server`);
-  sendRoomId();
+  sendRoomId('joinRoom');
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
     console.log(message);
@@ -21,14 +21,13 @@ socket.onopen = () => {
 };
 
 socket.onclose = () => {
-  console.log('Connection closed');
+  sendRoomId('leaveRoom');
 };
 
-function sendRoomId() {
-  const roomId = window.location.pathname.split('/')[2];
+function sendRoomId(type) {
   socket.send(
     JSON.stringify({
-      event: 'join',
+      event: type,
       data: roomId,
     }),
   );
@@ -40,7 +39,7 @@ function sendMessage() {
   socket.send(
     JSON.stringify({
       event: 'message',
-      data: message,
+      data: { roomId, message },
     }),
   );
   input.value = '';

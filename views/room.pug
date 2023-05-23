@@ -1,6 +1,7 @@
 extends layouts/base
 
 block content
+  a(href="/") 메인 화면
   <h1>WebSocket Chat</h1>
   <input type="text" id="message-input" />
   <button onclick="sendMessage()">Send</button>
@@ -8,6 +9,6 @@ block content
   div#chat-container
 
 block scripts
-  script(src="client/js/socket.js")
-  script(src="client/js/chat.js")
+  script(src="/client/js/socket.js")
+  script(src="/client/js/chat.js")
   

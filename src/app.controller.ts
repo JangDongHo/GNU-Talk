@@ -1,4 +1,4 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Param, Render } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -11,9 +11,9 @@ export class AppController {
     return;
   }
 
-  @Get('/room')
+  @Get('/room/:roomId')
   @Render('room')
-  getRoom(): string {
+  getRoom() {
     return;
   }
 }

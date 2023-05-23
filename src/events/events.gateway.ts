@@ -14,9 +14,11 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
+  rooms: { [id: string]: string[] } = {};
   clients: { [id: string]: WebSocket } = {};
 
-  handleConnection(client: WebSocket): void {
+  @SubscribeMessage('join')
+  handleConnection(client: WebSocket, payload: string): void {
     client['id'] = uuid();
     client['username'] = '낯선남자' + client['id'].split('-')[1];
     this.clients[client['id']] = client;
@@ -33,8 +35,17 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: WebSocket) {
+    const message = JSON.stringify({
+      event: 'leave',
+      username: client['username'],
+      data: '님이 퇴장하셨습니다.',
+    });
+    Object.values(this.clients).forEach((c) => {
+      if (c.readyState === WebSocket.OPEN) {
+        c.send(message);
+      }
+    });
     delete this.clients[client['id']];
-    console.log('Client disconnected');
   }
 
   @SubscribeMessage('message')
@@ -45,6 +56,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       event: 'message',
       username: client['username'],
       data: payload,
+      time: Date.now(),
     });
 
     Object.values(this.clients).forEach((c) => {

@@ -5,7 +5,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Room, Client, ChatServer } from './events.interfaces';
+import { Room, Client } from './events.interfaces';
 import { Server, WebSocket } from 'ws';
 import { v4 as uuid } from 'uuid';
 

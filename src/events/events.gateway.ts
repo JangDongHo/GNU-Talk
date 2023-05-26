@@ -28,17 +28,23 @@ export class EventsGateway implements OnGatewayDisconnect {
     this.rooms[roomId].push(client);
 
     // 방 목록 조회
-    const rooms = Object.keys(this.rooms).map((key) => {
-      // wating 방은 제외
-      if (key === 'waiting') return;
-      return {
-        roomId: key,
-        roomTitle: this.rooms[key]['title'],
-      };
-    });
-    console.log(rooms);
+    const rooms = Object.keys(this.rooms)
+      .map((key) => {
+        // wating 방은 제외
+        if (key === 'waiting') return;
+        return {
+          roomId: key,
+          roomTitle: this.rooms[key]['title'],
+        };
+      })
+      .filter((room) => room);
 
-    //client.send(this.rooms);
+    const message = JSON.stringify({
+      event: 'joinWaitingRoom',
+      rooms: rooms,
+    });
+
+    client.send(message);
   }
 
   @SubscribeMessage('createRoom')

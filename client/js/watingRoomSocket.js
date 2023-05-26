@@ -7,7 +7,11 @@ socket.onopen = () => {
     const message = JSON.parse(event.data);
     switch (message.event) {
       case 'joinWaitingRoom':
-        console.log(message);
+        const { rooms } = message;
+        rooms.forEach((room) => {
+          drawRoom(room);
+        });
+        break;
       case 'createRoom':
         drawRoom(message);
         break;

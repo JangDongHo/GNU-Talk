@@ -5,7 +5,6 @@ socket.onopen = () => {
   sendRoomId('joinRoom');
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
-    console.log(message);
     switch (message.event) {
       case 'message':
         drawChat(message);

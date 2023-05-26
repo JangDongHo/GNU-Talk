@@ -16,6 +16,11 @@ export class EventsGateway implements OnGatewayDisconnect {
   rooms: Room = {};
   clients: Client = {};
 
+  // 대기실
+  @SubscribeMessage('createRoom')
+  handleCreateRoom(client: WebSocket, payload: string): void {}
+
+  // 채팅방
   @SubscribeMessage('joinRoom')
   handleConnect(client: WebSocket, roomId: string): void {
     client['id'] = uuid();

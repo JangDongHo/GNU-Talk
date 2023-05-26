@@ -27,34 +27,38 @@ export class EventsGateway implements OnGatewayDisconnect {
 
     this.rooms[roomId].push(client);
 
-    const message = JSON.stringify({
-      event: 'join',
-      username: client['username'],
-      data: '님이 입장하셨습니다.',
+    // 방 목록 조회
+    const rooms = Object.keys(this.rooms).map((key) => {
+      // wating 방은 제외
+      if (key === 'waiting') return;
+      return {
+        roomId: key,
+        roomTitle: this.rooms[key]['title'],
+      };
     });
+    console.log(rooms);
 
-    // 브로드캐스팅
-    const roomClients = this.rooms[roomId];
-    roomClients.forEach((c) => {
-      if (c.readyState === WebSocket.OPEN) {
-        c.send(message);
-      }
-    });
+    //client.send(this.rooms);
   }
 
   @SubscribeMessage('createRoom')
   handleCreateRoom(client: WebSocket, payload: any): void {
     const roomId = uuid();
+    const roomTitle = payload.roomTitle || client['username'] + '님의 방';
     const message = JSON.stringify({
       event: 'createRoom',
       roomId: roomId,
-      roomTitle: payload.roomTitle,
+      roomTitle: roomTitle,
     });
+
+    // 방 생성
+    this.rooms[roomId] = [];
+    this.rooms[roomId]['title'] = roomTitle;
 
     // 대기실 클라이언트들에게 브로드캐스팅
     const roomClients = this.rooms['waiting'];
     roomClients.forEach((c) => {
-      if (c !== client && c.readyState === WebSocket.OPEN) {
+      if (c.readyState === WebSocket.OPEN) {
         c.send(message);
       }
     });
@@ -87,14 +91,14 @@ export class EventsGateway implements OnGatewayDisconnect {
   }
 
   handleDisconnect(client: WebSocket): void {
-    const roomId = Object.keys(this.rooms).find((key) =>
-      this.rooms[key].includes(client),
-    );
+    const roomId =
+      Object.keys(this.rooms).find((key) => this.rooms[key].includes(client)) ||
+      'waiting';
     const clientId = client['id'];
     const username = client['username'];
 
     // 클라이언트 정보 삭제
-    const roomClients = this.rooms[roomId];
+    const roomClients = this.rooms[roomId] || [];
     roomClients.forEach((roomClient) => {
       if (roomClient['id'] === clientId) {
         roomClients.splice(roomClients.indexOf(roomClient), 1);

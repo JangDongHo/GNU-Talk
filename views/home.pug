@@ -1,5 +1,11 @@
 extends layouts/base
 
 block content
-  p 
-    a(href="/room/1") 방 입장
+  input#create-room-input(type="text", placeholder="방 이름을 입력하세요")
+  <button onclick="createRoom()">방 만들기</button>
+
+  div#room-list
+
+block scripts 
+  script(src="/client/js/waitingRoom.js")
+  script(src="/client/js/watingRoomSocket.js")

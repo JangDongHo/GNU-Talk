@@ -17,12 +17,52 @@ export class EventsGateway implements OnGatewayDisconnect {
   clients: Client = {};
 
   // 대기실
+  @SubscribeMessage('joinWaitingRoom')
+  handleWaitingRoomConnect(client: WebSocket, roomId: string): void {
+    client['id'] = uuid();
+    client['username'] = '낯선남자' + client['id'].split('-')[1];
+    this.clients[client['id']] = client;
+
+    if (!this.rooms[roomId]) this.rooms[roomId] = [];
+
+    this.rooms[roomId].push(client);
+
+    const message = JSON.stringify({
+      event: 'join',
+      username: client['username'],
+      data: '님이 입장하셨습니다.',
+    });
+
+    // 브로드캐스팅
+    const roomClients = this.rooms[roomId];
+    roomClients.forEach((c) => {
+      if (c.readyState === WebSocket.OPEN) {
+        c.send(message);
+      }
+    });
+  }
+
   @SubscribeMessage('createRoom')
-  handleCreateRoom(client: WebSocket, payload: string): void {}
+  handleCreateRoom(client: WebSocket, payload: any): void {
+    const roomId = uuid();
+    const message = JSON.stringify({
+      event: 'createRoom',
+      roomId: roomId,
+      roomTitle: payload.roomTitle,
+    });
+
+    // 대기실 클라이언트들에게 브로드캐스팅
+    const roomClients = this.rooms['waiting'];
+    roomClients.forEach((c) => {
+      if (c !== client && c.readyState === WebSocket.OPEN) {
+        c.send(message);
+      }
+    });
+  }
 
   // 채팅방
   @SubscribeMessage('joinRoom')
-  handleConnect(client: WebSocket, roomId: string): void {
+  handleRoomConnect(client: WebSocket, roomId: string): void {
     client['id'] = uuid();
     client['username'] = '낯선남자' + client['id'].split('-')[1];
     this.clients[client['id']] = client;

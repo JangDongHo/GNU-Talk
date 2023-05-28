@@ -16,6 +16,8 @@ socket.onopen = () => {
         drawRoom(message);
         break;
       case 'deleteRoom':
+        const { roomId } = message;
+        deleteRoom(roomId);
         break;
       case 'joinRoom':
         break;
@@ -43,4 +45,9 @@ function createRoom() {
       data: roomInfo,
     }),
   );
+}
+
+function deleteRoom(roomId) {
+  const room = document.getElementById(roomId);
+  room.remove();
 }

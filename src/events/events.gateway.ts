@@ -111,19 +111,40 @@ export class EventsGateway implements OnGatewayDisconnect {
       }
     });
 
-    // 퇴장 메시지 생성
-    const message = JSON.stringify({
-      event: 'leave',
-      username: username,
-      data: '님이 퇴장하셨습니다.',
-    });
+    if (roomId === 'waiting') {
+    } else {
+      // 퇴장 메시지 생성
+      const message = JSON.stringify({
+        event: 'leave',
+        username: username,
+        data: '님이 퇴장하셨습니다.',
+      });
 
-    // 퇴장한 클라이언트를 제외하고, 해당 방에 속한 클라이언트에게 퇴장 메시지 전송 (브로드캐스팅)
-    roomClients.forEach((c) => {
-      if (c !== client && c.readyState === WebSocket.OPEN) {
-        c.send(message);
+      // 퇴장한 클라이언트를 제외하고, 해당 방에 속한 클라이언트에게 퇴장 메시지 전송 (브로드캐스팅)
+      roomClients.forEach((c) => {
+        if (c !== client && c.readyState === WebSocket.OPEN) {
+          c.send(message);
+        }
+      });
+
+      // 방에 클라이언트가 없으면 방 삭제
+      if (roomClients.length === 0) {
+        delete this.rooms[roomId];
+        const waitingRoomClients = this.rooms['waiting'];
+        // 삭제 메시지 생성
+        const message = JSON.stringify({
+          event: 'deleteRoom',
+          roomId: roomId,
+        });
+
+        // 대기실 클라이언트들에게 브로드캐스팅
+        waitingRoomClients.forEach((c) => {
+          if (c.readyState === WebSocket.OPEN) {
+            c.send(message);
+          }
+        });
       }
-    });
+    }
   }
 
   @SubscribeMessage('message')

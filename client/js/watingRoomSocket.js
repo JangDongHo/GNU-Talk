@@ -2,11 +2,25 @@ const socket = new WebSocket('ws://localhost:8080');
 const roomId = 'waiting';
 
 socket.onopen = () => {
-  sendRoomId('joinWaitingRoom');
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  let data;
+  if (!userData) {
+    const userId = uuidv4();
+    const userName = '낯선남자' + userId.split('-')[1];
+    data = { userId: userId, userName: userName, roomId: roomId };
+    sessionStorage.setItem('userData', JSON.stringify(data));
+  } else {
+    const { userId, userName } = userData;
+    data = { userId: userId, userName: userName, roomId: roomId };
+  }
+  socketEmit('setInit', data);
+  const { userId, userName } = JSON.parse(sessionStorage.getItem('userData'));
+  socketEmit('getChatRoomList');
+
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
     switch (message.event) {
-      case 'joinWaitingRoom':
+      case 'getChatRoomList':
         const { rooms } = message;
         rooms.forEach((room) => {
           drawRoom(room);
@@ -14,6 +28,8 @@ socket.onopen = () => {
         break;
       case 'createRoom':
         drawRoom(message);
+        if (message.userId === userId)
+          window.location.href = `/room/${message.roomId}`;
         break;
       case 'deleteRoom':
         const { roomId } = message;
@@ -27,11 +43,12 @@ socket.onopen = () => {
   };
 };
 
-function sendRoomId(type) {
+function socketEmit(type, data) {
+  if (!data) data = roomId;
   socket.send(
     JSON.stringify({
       event: type,
-      data: roomId,
+      data: data,
     }),
   );
 }
@@ -50,4 +67,14 @@ function createRoom() {
 function deleteRoom(roomId) {
   const room = document.getElementById(roomId);
   room.remove();
+}
+
+// uuid 생성 함수
+function uuidv4() {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16),
+  );
 }

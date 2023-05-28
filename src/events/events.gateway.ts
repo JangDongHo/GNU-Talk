@@ -17,16 +17,19 @@ export class EventsGateway implements OnGatewayDisconnect {
   clients: Client = {};
 
   // 대기실
-  @SubscribeMessage('joinWaitingRoom')
-  handleWaitingRoomConnect(client: WebSocket, roomId: string): void {
-    client['id'] = uuid();
-    client['username'] = '낯선남자' + client['id'].split('-')[1];
+  @SubscribeMessage('setInit')
+  handleInit(client: WebSocket, payload: any): void {
+    const { userId, userName, roomId } = payload;
+    client['id'] = userId;
+    client['username'] = userName;
     this.clients[client['id']] = client;
 
     if (!this.rooms[roomId]) this.rooms[roomId] = [];
-
     this.rooms[roomId].push(client);
+  }
 
+  @SubscribeMessage('getChatRoomList')
+  handleWaitingRoomConnect(client: WebSocket): void {
     // 방 목록 조회
     const rooms = Object.keys(this.rooms)
       .map((key) => {
@@ -40,7 +43,7 @@ export class EventsGateway implements OnGatewayDisconnect {
       .filter((room) => room);
 
     const message = JSON.stringify({
-      event: 'joinWaitingRoom',
+      event: 'getChatRoomList',
       rooms: rooms,
     });
 
@@ -55,6 +58,7 @@ export class EventsGateway implements OnGatewayDisconnect {
       event: 'createRoom',
       roomId: roomId,
       roomTitle: roomTitle,
+      userId: client['id'],
     });
 
     // 방 생성
@@ -72,9 +76,10 @@ export class EventsGateway implements OnGatewayDisconnect {
 
   // 채팅방
   @SubscribeMessage('joinRoom')
-  handleRoomConnect(client: WebSocket, roomId: string): void {
-    client['id'] = uuid();
-    client['username'] = '낯선남자' + client['id'].split('-')[1];
+  handleRoomConnect(client: WebSocket, payload: any): void {
+    const { userId, userName, roomId } = payload;
+    client['id'] = userId;
+    client['username'] = userName;
     this.clients[client['id']] = client;
 
     if (!this.rooms[roomId]) this.rooms[roomId] = [];
@@ -149,8 +154,6 @@ export class EventsGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('message')
   handleMessage(client: WebSocket, payload: string) {
-    console.log('Received message:', payload);
-
     const message = JSON.stringify({
       event: 'message',
       username: client['username'],

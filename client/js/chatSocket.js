@@ -2,7 +2,10 @@ const socket = new WebSocket('ws://localhost:8080');
 const roomId = window.location.pathname.split('/')[2];
 
 socket.onopen = () => {
-  sendRoomId('joinRoom');
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  const { userId, userName } = userData;
+  const data = { userId: userId, userName: userName, roomId: roomId };
+  socketEmit('joinRoom', data);
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
     switch (message.event) {
@@ -20,14 +23,15 @@ socket.onopen = () => {
 };
 
 socket.onclose = () => {
-  sendRoomId('leaveRoom');
+  socketEmit('leaveRoom');
 };
 
-function sendRoomId(type) {
+function socketEmit(type, data) {
+  if (!data) data = roomId;
   socket.send(
     JSON.stringify({
       event: type,
-      data: roomId,
+      data: data,
     }),
   );
 }

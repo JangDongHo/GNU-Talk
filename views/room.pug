@@ -5,10 +5,17 @@ block content
   <h1>WebSocket Chat</h1>
   <input type="text" id="message-input" />
   <button onclick="sendMessage()">Send</button>
+  <br>
+  input(type="file" id="image-input" multiple="multiple" accept="image/*")
+  button(onclick="sendImage()") Send Image
+  <br>
+  canvas#jsCanvas
+  button(onclick="sendCanvas()") Send Canvas
 
   div#chat-container
 
 block scripts
   script(src="/client/js/chatSocket.js")
   script(src="/client/js/chat.js")
+  script(src="/client/js/canvas.js")
   

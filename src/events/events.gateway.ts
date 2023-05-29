@@ -168,4 +168,22 @@ export class EventsGateway implements OnGatewayDisconnect {
       }
     });
   }
+
+  @SubscribeMessage('image')
+  handleImage(client: WebSocket, payload: any) {
+    const { roomId, image } = payload;
+    const message = JSON.stringify({
+      event: 'image',
+      username: client['username'],
+      data: image,
+      time: Date.now(),
+    });
+
+    const roomClients = this.rooms[roomId];
+    roomClients.forEach((c) => {
+      if (c.readyState === WebSocket.OPEN) {
+        c.send(message);
+      }
+    });
+  }
 }

@@ -9,14 +9,17 @@ socket.onopen = () => {
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
     switch (message.event) {
-      case 'message':
-        drawChat(message);
-        break;
       case 'join':
         drawJoinLeave(message, 'join');
         break;
       case 'leave':
         drawJoinLeave(message, 'leave');
+        break;
+      case 'message':
+        drawChat(message);
+        break;
+      case 'image':
+        drawImage(message);
         break;
     }
   };
@@ -46,4 +49,32 @@ function sendMessage() {
     }),
   );
   input.value = '';
+}
+
+function sendImage() {
+  const input = document.getElementById('image-input');
+  const images = Array.from(input.files);
+  images.forEach((image) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = () => {
+      socket.send(
+        JSON.stringify({
+          event: 'image',
+          data: { roomId, image: reader.result },
+        }),
+      );
+    };
+  });
+}
+
+function sendCanvas() {
+  const canvas = document.getElementById('jsCanvas');
+  const image = canvas.toDataURL();
+  socket.send(
+    JSON.stringify({
+      event: 'image',
+      data: { roomId, image },
+    }),
+  );
 }

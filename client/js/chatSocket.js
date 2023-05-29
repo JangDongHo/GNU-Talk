@@ -70,7 +70,9 @@ function sendImage() {
 
 function sendCanvas() {
   const canvas = document.getElementById('jsCanvas');
+  // 캔버스 초기화
   const image = canvas.toDataURL();
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
   socket.send(
     JSON.stringify({
       event: 'image',

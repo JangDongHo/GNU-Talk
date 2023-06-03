@@ -1,6 +1,11 @@
 body {
+  position: relative;
   background-color: #d2dcef;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.except-content {
+  display: none;
 }
 
 .header-container {
@@ -123,6 +128,57 @@ del {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#message-input-container {
+  position: absolute;
+  width: 100%;
+  height: 20vh;
+  bottom: 0;
+  font-size: 16px;
+  background-color: white;
+}
+#message-input-container #message-input {
+  position: absolute;
+  width: 100%;
+  height: 70%;
+  border: none;
+}
+#message-input-container #message-input-button-container {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 13px;
+}
+#message-input-container #message-input-button-container #message-input-button_left {
+  cursor: pointer;
+  color: #cdcdcd;
+}
+#message-input-container #message-input-button-container #message-input-button_left i {
+  margin-left: 15px;
+  font-size: 20px;
+}
+#message-input-container #message-input-button-container #message-input-button_right {
+  margin-right: 10px;
+}
+#message-input-container #message-input-button-container #message-input-button_right button {
+  cursor: pointer;
+  width: 80px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  background-color: #5963d9;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 #jsCanvas {

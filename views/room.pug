@@ -2,21 +2,26 @@ extends layouts/base
 
 block header
   .header-container
-    i.fa-solid.fa-arrow-left
+    a(href="/") 
+      i.fa-solid.fa-arrow-left
     h1 방 목록
     i.fa-solid.fa-bars
 
 block content
-  a(href="/") 메인 화면
-  <h1>WebSocket Chat</h1>
-  <input type="text" id="message-input" />
-  <button onclick="sendMessage()">Send</button>
-  <br>
-  input(type="file" id="image-input" multiple="multiple" accept="image/*")
-  button(onclick="sendImage()") Send Image
-  <br>
-  canvas#jsCanvas
-  button(onclick="sendCanvas()") Send Canvas
+  div(id="message-input-container")
+    input(type="text" id="message-input")
+    div(id="message-input-button-container")
+      div(id="message-input-button_left")
+        i.fa-solid.fa-image
+        i.fa-solid.fa-paint-brush
+      div(id="message-input-button_right")
+        button(onclick="sendMessage()") 전송
+  div(id="image-container").except-content
+    input(type="file" id="image-input" multiple="multiple" accept="image/*")
+    button(onclick="sendImage()") Send Image
+  div(id="canvas-container").except-content
+    canvas#jsCanvas
+    button(onclick="sendCanvas()") Send Canvas
 
   div#chat-container
 

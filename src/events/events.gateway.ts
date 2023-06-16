@@ -38,6 +38,7 @@ export class EventsGateway implements OnGatewayDisconnect {
         return {
           roomId: key,
           roomTitle: this.rooms[key]['title'],
+          time: this.rooms[key]['time'],
         };
       })
       .filter((room) => room);
@@ -59,11 +60,13 @@ export class EventsGateway implements OnGatewayDisconnect {
       roomId: roomId,
       roomTitle: roomTitle,
       userId: client['id'],
+      time: Date.now(),
     });
 
     // 방 생성
     this.rooms[roomId] = [];
     this.rooms[roomId]['title'] = roomTitle;
+    this.rooms[roomId]['time'] = Date.now();
 
     // 대기실 클라이언트들에게 브로드캐스팅
     const roomClients = this.rooms['waiting'];
@@ -88,6 +91,7 @@ export class EventsGateway implements OnGatewayDisconnect {
 
     const message = JSON.stringify({
       event: 'join',
+      roomTitle: this.rooms[roomId]['title'],
       username: client['username'],
       data: '님이 입장하셨습니다.',
     });

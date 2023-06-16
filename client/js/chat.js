@@ -1,3 +1,9 @@
+// 방 제목 설정
+const setRoomTitle = (roomTitle) => {
+  const roomName = document.getElementById('room-name');
+  roomName.innerText = roomTitle;
+};
+
 // 입퇴장 메시지 그리기
 const drawJoinLeave = (data, type) => {
   const { username, data: message } = data;
@@ -14,8 +20,16 @@ const drawJoinLeave = (data, type) => {
 // 일반적인 채팅창 그리기
 const drawChat = (data) => {
   const { username, data: message, time } = data;
+  const profile = document.createElement('div');
+  profile.classList.add('chat-profile');
+  const profileImage = document.createElement('img');
+  profileImage.classList.add('chat-profile-image');
+  profileImage.src = 'http://localhost:3000/client/images/profile.png';
   const chat = document.createElement('div');
   chat.classList.add('chat');
+  chat.classList.add('chat-text');
+  const chatBox1 = document.createElement('div');
+  chatBox1.classList.add('chat-box1');
   const chatUsername = document.createElement('div');
   chatUsername.classList.add('chat-username');
   chatUsername.innerText = username;
@@ -31,9 +45,12 @@ const drawChat = (data) => {
     chatTimeFormat.getMinutes(),
   ).padStart(2, '0')}`;
   chatTime.innerText = chatTimeFormat;
-  chat.appendChild(chatUsername);
-  chat.appendChild(chatMessage);
-  chat.appendChild(chatTime);
+  profile.appendChild(profileImage);
+  chat.appendChild(profile);
+  chat.appendChild(chatBox1);
+  chatBox1.appendChild(chatUsername);
+  chatBox1.appendChild(chatMessage);
+  chatBox1.appendChild(chatTime);
   const chatContainer = document.getElementById('chat-container');
   chatContainer.appendChild(chat);
 };
@@ -41,8 +58,16 @@ const drawChat = (data) => {
 // 이미지 그리기
 const drawImage = (data) => {
   const { username, data: image, time } = data;
+  const profile = document.createElement('div');
+  profile.classList.add('chat-profile');
+  const profileImage = document.createElement('img');
+  profileImage.classList.add('chat-profile-image');
+  profileImage.src = 'http://localhost:3000/client/images/profile.png';
   const chat = document.createElement('div');
   chat.classList.add('chat');
+  chat.classList.add('chat-text');
+  const chatBox1 = document.createElement('div');
+  chatBox1.classList.add('chat-box1');
   const chatUsername = document.createElement('div');
   chatUsername.classList.add('chat-username');
   chatUsername.innerText = username;
@@ -58,9 +83,22 @@ const drawImage = (data) => {
     chatTimeFormat.getMinutes(),
   ).padStart(2, '0')}`;
   chatTime.innerText = chatTimeFormat;
-  chat.appendChild(chatUsername);
-  chat.appendChild(chatImage);
-  chat.appendChild(chatTime);
+  profile.appendChild(profileImage);
+  chat.appendChild(profile);
+  chat.appendChild(chatBox1);
+  chatBox1.appendChild(chatUsername);
+  chatBox1.appendChild(chatImage);
+  chatBox1.appendChild(chatTime);
   const chatContainer = document.getElementById('chat-container');
   chatContainer.appendChild(chat);
+};
+
+const handleImageClick = () => {
+  const imageContainer = document.getElementById('image-container');
+  imageContainer.classList.toggle('except-content');
+};
+
+const handleCanvasClick = () => {
+  const canvasContainer = document.getElementById('canvas-container');
+  canvasContainer.classList.toggle('except-content');
 };

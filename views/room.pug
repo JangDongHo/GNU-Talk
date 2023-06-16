@@ -4,7 +4,7 @@ block header
   .header-container
     a(href="/") 
       i.fa-solid.fa-arrow-left
-    h1 방 목록
+    h1#room-name
     i.fa-solid.fa-bars
 
 block content
@@ -12,8 +12,8 @@ block content
     input(type="text" id="message-input")
     div(id="message-input-button-container")
       div(id="message-input-button_left")
-        i.fa-solid.fa-image
-        i.fa-solid.fa-paint-brush
+        i(onclick="handleImageClick()").fa-solid.fa-image
+        i(onclick="handleCanvasClick()").fa-solid.fa-paint-brush
       div(id="message-input-button_right")
         button(onclick="sendMessage()") 전송
   div(id="image-container").except-content

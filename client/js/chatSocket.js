@@ -10,6 +10,7 @@ socket.onopen = () => {
     const message = JSON.parse(event.data);
     switch (message.event) {
       case 'join':
+        setRoomTitle(message.roomTitle);
         drawJoinLeave(message, 'join');
         break;
       case 'leave':

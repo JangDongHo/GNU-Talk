@@ -135,6 +135,82 @@ a {
   text-decoration: none;
 }
 
+#room-list {
+  padding: 30px;
+}
+#room-list .room {
+  position: relative;
+  list-style-type: none;
+  display: flex;
+  margin-bottom: 20px;
+}
+#room-list .room .color-box {
+  width: 21px;
+  height: 45px;
+  margin-right: 10px;
+}
+#room-list .room .room-title {
+  font-weight: bold;
+  font-size: 20px;
+}
+#room-list .room .room-time {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 14px;
+  color: rgb(151, 151, 151);
+}
+
+#chat-container {
+  overflow: auto;
+}
+#chat-container .chat {
+  padding: 10px 20px;
+}
+#chat-container .chat .chat-join,
+#chat-container .chat .chat-leave {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+#chat-container .chat-text {
+  display: flex;
+}
+#chat-container .chat-text .chat-profile .chat-profile-image {
+  width: 46px;
+  height: 46px;
+}
+#chat-container .chat-text .chat-box1 {
+  margin-left: 10px;
+  position: relative;
+}
+#chat-container .chat-text .chat-box1 .chat-username {
+  font-size: 16px;
+  font-weight: bold;
+}
+#chat-container .chat-text .chat-box1 .chat-message {
+  margin-top: 10px;
+  font-size: 14px;
+  background-color: white;
+  padding: 11px 13px;
+  border-radius: 10px;
+}
+#chat-container .chat-text .chat-box1 .chat-image {
+  margin-top: 10px;
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+}
+#chat-container .chat-text .chat-box1 .chat-time {
+  position: absolute;
+  font-size: 12px;
+  color: #adadad;
+  right: -60px;
+  bottom: 0;
+}
+
 #message-input-container {
   position: absolute;
   width: 100%;

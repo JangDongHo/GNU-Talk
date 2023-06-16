@@ -69,6 +69,24 @@ function deleteRoom(roomId) {
   room.remove();
 }
 
+function setNickname() {
+  const changedNickname = document.getElementById('nickname-input').value;
+  if (changedNickname === '') {
+    alert('닉네임을 입력해주세요.');
+    return;
+  }
+
+  // 유저 정보 불러오기
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  const { userId, userName, roomId } = userData;
+  const data = {
+    userId,
+    userName: changedNickname,
+    roomId,
+  };
+  sessionStorage.setItem('userData', JSON.stringify(data));
+}
+
 // uuid 생성 함수
 function uuidv4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>

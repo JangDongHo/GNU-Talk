@@ -1,0 +1,25 @@
+#room-list {
+  padding: 30px;
+  .room {
+    position: relative;
+    list-style-type: none;
+    display: flex;
+    margin-bottom: 20px;
+    .color-box {
+      width: 21px;
+      height: 45px;
+      margin-right: 10px;
+    }
+    .room-title {
+      font-weight: bold;
+      font-size: 20px;
+    }
+    .room-time {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      font-size: 14px;
+      color: rgb(151, 151, 151);
+    }
+  }
+}

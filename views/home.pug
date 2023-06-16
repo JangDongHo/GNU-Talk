@@ -2,14 +2,17 @@ extends layouts/base
 
 block header
   .header-container
-    i.fa-solid.fa-plus
+    i(onclick="handleCreateRoom()").fa-solid.fa-plus
     h1 방 목록
-    i.fa-solid.fa-bars
+    i(onclick="handleSetNickname()").fa-solid.fa-bars
 
 block content
-  input#create-room-input(type="text", placeholder="방 이름을 입력하세요")
-  <button onclick="createRoom()">방 만들기</button>
-
+  div#room-create-container.except-content
+    input#create-room-input(type="text", placeholder="방 이름을 입력하세요")
+    <button onclick="createRoom()">방 만들기</button>
+  div#set-nickname-container.except-content
+    input#nickname-input(type="text", placeholder="닉네임을 입력하세요")
+    <button onclick="setNickname()">닉네임 설정</button>
   div#room-list
 
 block scripts 
